@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -63,7 +64,7 @@ internal fun BottomBar(
             onClick = navigator::navigateToSettingsScreen,
             icon = {
                 Icon(
-                    Icons.AutoMirrored.Filled.List,
+                    Icons.Default.Settings,
                     contentDescription = "Icon2"
                 )
             },
