@@ -23,3 +23,4 @@ rootProject.name = "Quick qoute stick"
 include(":app")
 include(":domain")
 include(":data")
+include(":presentation")
