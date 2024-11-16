@@ -32,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -66,6 +67,7 @@ import kotlinx.coroutines.launch
 import ru.vafeen.quickquotestick.presentation.components.screens.base.ComposableScreen
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TGMessage
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TextForThisTheme
+import ru.vafeen.quickquotestick.presentation.ui.theme.Theme
 import ru.vafeen.quickquotestick.presentation.utils.saveImageToGallery
 
 internal class MainScreen() : ComposableScreen {
@@ -110,87 +112,96 @@ internal class MainScreen() : ComposableScreen {
             }
         }
         var expanded by remember { mutableStateOf(false) }
-        Scaffold(topBar = {
-            TopAppBar(
-                title = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(Color.Blue)
-                    ) {
-                        TextForThisTheme(text = "Покатаев Н.В.")
-                    }
-                },
-                actions = {
-                    // Три точки (иконка меню)
-                    IconButton(onClick = { expanded = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "Меню")
-                    }
-
-                    // Выпадающее меню
-                    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                        DropdownMenuItem(text = {
-                            Text("Сохранить диалог как файл")
-                        }, onClick = {
-                            expanded = false
-                            cor.launch {
-                                val bitmap = graphicsLayer.toImageBitmap()
-                                imageBitmap = bitmap
-                                saveImageToGallery(context, bitmap)
-                            }
-                        })
-                    }
-                },
-            )
-        }, bottomBar = {
-            BottomAppBar {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    BasicTextField(
-                        value = message,
-                        onValueChange = { message = it },
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxHeight(),
-                    )
-                    IconButton(onClick = {
-                        if (message.isNotEmpty()) {
-                            messages.add(message)
-                            message = ""
-                            cor.launch {
-                                lazyListState.animateScrollToItem(messages.lastIndex)
-                            }
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Theme.colors.mainColor),
+                    title = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            TextForThisTheme(text = "Покатаев Н.В.")
                         }
-                    }) {
-                        Icon(Icons.Default.Send, contentDescription = "Send")
-                    }
-                }
-            }
-        }) { innerPadding ->
-            Box(modifier = Modifier
-                .padding(innerPadding)
-                .drawWithContent {
-                    // call record to capture the content in the graphics layer
-                    graphicsLayer.record {
-                        // draw the contents of the composable into the graphics layer
-                        this@drawWithContent.drawContent()
-                    }
-                    // draw the graphics layer on the visible canvas
-                    drawLayer(graphicsLayer)
-                }
-                .background(Color.Transparent)) {
-                LazyColumn(state = lazyListState) {
-                    itemsIndexed(messages) { index, it ->
-                        TGMessage(
-                            title = if (index == 0) "Покатаев Н.В." else null,
-                            text = it,
-                            index = index,
-                            size = messages.size
+                    },
+                    actions = {
+                        // Три точки (иконка меню)
+                        IconButton(onClick = { expanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "Меню")
+                        }
+
+                        // Выпадающее меню
+                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                            DropdownMenuItem(text = {
+                                Text("Сохранить диалог как файл")
+                            }, onClick = {
+                                expanded = false
+                                cor.launch {
+                                    val bitmap = graphicsLayer.toImageBitmap()
+                                    imageBitmap = bitmap
+                                    saveImageToGallery(context, bitmap)
+                                }
+                            })
+                        }
+                    },
+                )
+            }, bottomBar = {
+                BottomAppBar {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        BasicTextField(
+                            value = message,
+                            onValueChange = { message = it },
+                            modifier = Modifier
+                                .weight(1f)
+                                .fillMaxHeight(),
                         )
+                        IconButton(onClick = {
+                            if (message.isNotEmpty()) {
+                                messages.add(message)
+                                message = ""
+                                cor.launch {
+                                    lazyListState.animateScrollToItem(messages.lastIndex)
+                                }
+                            }
+                        }) {
+                            Icon(Icons.Default.Send, contentDescription = "Send")
+                        }
                     }
                 }
+            }) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(Theme.colors.singleTheme)
+            ) {
+                Box(modifier = Modifier
+                    .drawWithContent {
+                        // call record to capture the content in the graphics layer
+                        graphicsLayer.record {
+                            // draw the contents of the composable into the graphics layer
+                            this@drawWithContent.drawContent()
+                        }
+                        // draw the graphics layer on the visible canvas
+                        drawLayer(graphicsLayer)
+                    }
+//                .background(Color.Transparent)
+                ) {
+                    LazyColumn(state = lazyListState) {
+                        itemsIndexed(messages) { index, it ->
+                            TGMessage(
+                                title = if (index == 0) "Покатаев Н.В." else null,
+                                text = it,
+                                index = index,
+                                size = messages.size
+                            )
+                        }
+                    }
+                }
+
             }
         }
     }

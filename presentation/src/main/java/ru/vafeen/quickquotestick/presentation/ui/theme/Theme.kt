@@ -15,13 +15,13 @@ internal data class Colors(
 )
 
 internal val baseLightPalette = Colors(
-    mainColor = mainLightColor,
+    mainColor = mainColor,
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
     buttonColor = Color.White// Color(0xFFF9F9F9)// Color(0xFFEFEFFF)
 )
 internal val baseDarkPalette = baseLightPalette.copy(
-    mainColor = mainDarkColor,
+    mainColor = mainColor,
     singleTheme = Color.Black,
     oppositeTheme = Color.White,
     buttonColor = Color(0xFF2D2D31)
