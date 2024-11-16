@@ -3,6 +3,7 @@ package ru.vafeen.quickquotestick.presentation.components.screens
 import android.R.attr.onClick
 import android.R.id.message
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.BottomAppBar
@@ -98,7 +100,16 @@ internal class MainScreen() : ComposableScreen {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val coroutineScope = rememberCoroutineScope()
+        val tfColors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent,
+            focusedTextColor = Theme.colors.oppositeTheme,
+            unfocusedTextColor = Theme.colors.oppositeTheme,
+            unfocusedLabelColor = Color.Gray,
+            focusedLabelColor = Color.Gray
+        )
+        var name by remember { mutableStateOf("Click to change name") }
+        var isNameInChanging by remember { mutableStateOf(false) }
         val graphicsLayer = rememberGraphicsLayer()
         var imageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
         val context = LocalContext.current
@@ -109,6 +120,7 @@ internal class MainScreen() : ComposableScreen {
                 "Тест",
             )
         }
+
         val messageController = object : MessageController {
             override fun deleteByIndex(index: Int) {
                 try {
@@ -130,14 +142,36 @@ internal class MainScreen() : ComposableScreen {
                 TopAppBar(
                     colors = TopAppBarDefaults.topAppBarColors(containerColor = Theme.colors.mainColor),
                     title = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                        ) {
-                            Text(
-                                text = "Покатаев Н.В.",
-                                color = Theme.colors.mainColor.suitableColor()
-                            )
+                        if (isNameInChanging) {
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                OutlinedTextField(
+                                    colors = tfColors,
+                                    value = name,
+                                    onValueChange = { name = it },
+                                    modifier = Modifier
+                                        .weight(1f),
+                                )
+                                IconButton(onClick = { isNameInChanging = false }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = null,
+                                        tint = Theme.colors.oppositeTheme
+                                    )
+                                }
+                            }
+                        } else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = name,
+                                    color = Theme.colors.mainColor.suitableColor(),
+                                    modifier = Modifier.clickable {
+                                        isNameInChanging = true
+                                    }
+                                )
+                            }
                         }
                     },
                     actions = {
@@ -174,14 +208,7 @@ internal class MainScreen() : ComposableScreen {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         OutlinedTextField(
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                focusedTextColor = Theme.colors.oppositeTheme,
-                                unfocusedTextColor = Theme.colors.oppositeTheme,
-                                unfocusedLabelColor = Color.Gray,
-                                focusedLabelColor = Color.Gray
-                            ),
+                            colors = tfColors,
                             label = { Text(text = stringResource(id = Resources.string.enter_message)) },
                             value = message,
                             onValueChange = { message = it },
@@ -229,7 +256,7 @@ internal class MainScreen() : ComposableScreen {
                         itemsIndexed(messages) { index, it ->
                             TGMessage(
                                 controller = messageController,
-                                title = if (index == 0) "Покатаев Н.В." else null,
+                                title = if (index == 0) name else null,
                                 text = it,
                                 index = index,
                                 size = messages.size
