@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_screen_here">Экрана нет</string>
+    <string name="save_dialog_as_image">Сохранить диалог как изображение</string>
+    <string name="enter_message">Введите сообщение</string>
 </resources>

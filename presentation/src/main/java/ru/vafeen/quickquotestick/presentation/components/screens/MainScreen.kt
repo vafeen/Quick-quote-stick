@@ -28,6 +28,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -60,6 +61,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -69,6 +71,8 @@ import ru.vafeen.quickquotestick.presentation.components.ui_utils.TGMessage
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TextForThisTheme
 import ru.vafeen.quickquotestick.presentation.ui.theme.Theme
 import ru.vafeen.quickquotestick.presentation.utils.saveImageToGallery
+import ru.vafeen.quickquotestick.presentation.utils.suitableColor
+import ru.vafeen.quickquotestick.resources.R as Resources
 
 internal class MainScreen() : ComposableScreen {
     @Composable
@@ -121,19 +125,27 @@ internal class MainScreen() : ComposableScreen {
                             modifier = Modifier
                                 .fillMaxWidth()
                         ) {
-                            TextForThisTheme(text = "Покатаев Н.В.")
+                            Text(
+                                text = "Покатаев Н.В.",
+                                color = Theme.colors.mainColor.suitableColor()
+                            )
                         }
                     },
                     actions = {
                         // Три точки (иконка меню)
                         IconButton(onClick = { expanded = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "Меню")
+                            Icon(
+                                Icons.Default.MoreVert,
+                                contentDescription = "Меню",
+                                tint = Theme.colors.mainColor.suitableColor()
+                            )
                         }
 
                         // Выпадающее меню
-                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                        DropdownMenu(modifier = Modifier.background(Theme.colors.singleTheme),
+                            expanded = expanded, onDismissRequest = { expanded = false }) {
                             DropdownMenuItem(text = {
-                                Text("Сохранить диалог как файл")
+                                TextForThisTheme(text = stringResource(id = Resources.string.save_dialog_as_image))
                             }, onClick = {
                                 expanded = false
                                 cor.launch {
@@ -146,17 +158,25 @@ internal class MainScreen() : ComposableScreen {
                     },
                 )
             }, bottomBar = {
-                BottomAppBar {
+                BottomAppBar(containerColor = Theme.colors.mainColor) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        BasicTextField(
+                        OutlinedTextField(
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedTextColor = Theme.colors.oppositeTheme,
+                                unfocusedTextColor = Theme.colors.oppositeTheme,
+                                unfocusedLabelColor = Color.Gray,
+                                focusedLabelColor = Color.Gray
+                            ),
+                            label = { Text(text = stringResource(id = Resources.string.enter_message)) },
                             value = message,
                             onValueChange = { message = it },
                             modifier = Modifier
-                                .weight(1f)
-                                .fillMaxHeight(),
+                                .weight(1f),
                         )
                         IconButton(onClick = {
                             if (message.isNotEmpty()) {
@@ -167,7 +187,10 @@ internal class MainScreen() : ComposableScreen {
                                 }
                             }
                         }) {
-                            Icon(Icons.Default.Send, contentDescription = "Send")
+                            Icon(
+                                imageVector = Icons.Default.Send, contentDescription = "Send",
+                                tint = Theme.colors.oppositeTheme
+                            )
                         }
                     }
                 }
@@ -188,9 +211,11 @@ internal class MainScreen() : ComposableScreen {
                         // draw the graphics layer on the visible canvas
                         drawLayer(graphicsLayer)
                     }
-//                .background(Color.Transparent)
                 ) {
-                    LazyColumn(state = lazyListState) {
+                    LazyColumn(
+                        state = lazyListState,
+                        modifier = Modifier.background(Theme.colors.singleTheme)
+                    ) {
                         itemsIndexed(messages) { index, it ->
                             TGMessage(
                                 title = if (index == 0) "Покатаев Н.В." else null,
