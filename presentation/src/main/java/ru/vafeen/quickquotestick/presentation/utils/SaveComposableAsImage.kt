@@ -13,9 +13,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MovableContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,79 +35,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TextForThisTheme
 
-@Composable
-fun CreateImageFromComposable() {
-    val coroutineScope = rememberCoroutineScope()
-    val graphicsLayer = rememberGraphicsLayer()
-    var imageBitmap: ImageBitmap? by remember { mutableStateOf(null) }
-    val context = LocalContext.current
-
-    // Запрашиваем разрешение на доступ к внутренней памяти при запуске
-    LaunchedEffect(null) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                (context as Activity),
-                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                1
-            )
-        }
-    }
-
-    Column {
-        if (imageBitmap != null) {
-            TextForThisTheme("тут должна быть картинка")
-            Image(
-                modifier = Modifier
-                    .background(Color.White)
-                    .padding(1.dp),
-                bitmap = imageBitmap!!, contentDescription = null
-            )
-        }
-        Box(
-            modifier = Modifier
-                .drawWithContent {
-                    // call record to capture the content in the graphics layer
-                    graphicsLayer.record {
-                        // draw the contents of the composable into the graphics layer
-                        this@drawWithContent.drawContent()
-                    }
-                    // draw the graphics layer on the visible canvas
-                    drawLayer(graphicsLayer)
-                }
-                .clickable {
-                    coroutineScope.launch {
-                        val bitmap = graphicsLayer.toImageBitmap()
-                        imageBitmap = bitmap
-                        saveImageToGallery(context, bitmap)
-                    }
-                }
-                .background(Color.Red)
-        ) {
-            TextForThisTheme("Hello Android", fontSize = 20.sp)
-        }
-    }
-}
-
-
 
 // Функция для сохранения ImageBitmap в галерею
-private fun saveImageToGallery(context: Context, bitmap: ImageBitmap) {
+fun saveImageToGallery(context: Context, bitmap: ImageBitmap) {
     val imageFileName = "saved_image_${System.currentTimeMillis()}.png"
 
     // Создаем ContentValues для нового изображения
     val contentValues = ContentValues().apply {
         put(MediaStore.Images.Media.DISPLAY_NAME, imageFileName)
         put(MediaStore.Images.Media.MIME_TYPE, "image/png")
-        put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/QuickQuotesStick") // Сохраняем в папке "QuickQuotesStick"
+        put(
+            MediaStore.Images.Media.RELATIVE_PATH,
+            "Pictures/QuickQuotesStick"
+        ) // Сохраняем в папке "QuickQuotesStick"
     }
 
     // Получаем URI для сохранения в папку Pictures
-    val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+    val uri =
+        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
     if (uri != null) {
         try {
@@ -127,6 +78,10 @@ private fun saveImageToGallery(context: Context, bitmap: ImageBitmap) {
 }
 
 private fun showSaveNotification(context: Context, imageFileName: String) {
-    Toast.makeText(context, "Изображение '$imageFileName' успешно сохранено в галерее!", Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+        context,
+        "Изображение '$imageFileName' успешно сохранено в галерее!",
+        Toast.LENGTH_SHORT
+    ).show()
 }
 
