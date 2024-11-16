@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.vafeen.quickquotestick.domain"
+    namespace = "ru.vafeen.quickquotestick.resources"
     compileSdk = 34
 
     defaultConfig {
@@ -33,13 +33,11 @@ android {
 }
 
 dependencies {
-    api(project(":resources"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    //koin
-    api(libs.koin.android)
 }
