@@ -3,4 +3,5 @@
     <string name="no_screen_here">No screen here</string>
     <string name="save_dialog_as_image">Save dialog as image</string>
     <string name="enter_message">Enter message</string>
+    <string name="delete">Delete</string>
 </resources>

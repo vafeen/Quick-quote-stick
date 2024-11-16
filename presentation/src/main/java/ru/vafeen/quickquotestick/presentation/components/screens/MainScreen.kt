@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.launch
+import ru.vafeen.quickquotestick.domain.MessageController
 import ru.vafeen.quickquotestick.presentation.components.screens.base.ComposableScreen
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TGMessage
 import ru.vafeen.quickquotestick.presentation.components.ui_utils.TextForThisTheme
@@ -108,10 +109,18 @@ internal class MainScreen() : ComposableScreen {
                 "Тест",
             )
         }
+        val messageController = object : MessageController {
+            override fun deleteByIndex(index: Int) {
+                try {
+                    messages.remove(messages[index])
+                } catch (_: Exception) {
+                }
+            }
+        }
         val lazyListState = rememberLazyListState(initialFirstVisibleItemIndex = messages.lastIndex)
         val cor = rememberCoroutineScope()
         LaunchedEffect(kc) {
-            if (kc) cor.launch {
+            if (kc && messages.isNotEmpty()) cor.launch {
                 lazyListState.scrollToItem(messages.lastIndex)
             }
         }
@@ -133,13 +142,14 @@ internal class MainScreen() : ComposableScreen {
                     },
                     actions = {
                         // Три точки (иконка меню)
-                        IconButton(onClick = { expanded = true }) {
-                            Icon(
-                                Icons.Default.MoreVert,
-                                contentDescription = "Меню",
-                                tint = Theme.colors.mainColor.suitableColor()
-                            )
-                        }
+                        if (messages.isNotEmpty())
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(
+                                    Icons.Default.MoreVert,
+                                    contentDescription = "Меню",
+                                    tint = Theme.colors.mainColor.suitableColor()
+                                )
+                            }
 
                         // Выпадающее меню
                         DropdownMenu(modifier = Modifier.background(Theme.colors.singleTheme),
@@ -218,6 +228,7 @@ internal class MainScreen() : ComposableScreen {
                     ) {
                         itemsIndexed(messages) { index, it ->
                             TGMessage(
+                                controller = messageController,
                                 title = if (index == 0) "Покатаев Н.В." else null,
                                 text = it,
                                 index = index,
