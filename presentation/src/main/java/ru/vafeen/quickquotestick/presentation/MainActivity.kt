@@ -1,6 +1,7 @@
 package ru.vafeen.quickquotestick.presentation
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -26,7 +28,7 @@ import ru.vafeen.quickquotestick.presentation.navigation.Screen
 import ru.vafeen.quickquotestick.presentation.ui.theme.MainTheme
 import ru.vafeen.quickquotestick.presentation.ui.theme.Theme
 import ru.vafeen.quickquotestick.presentation.utils.navigateeee
-
+import ru.vafeen.quickquotestick.resources.R as Resources
 class MainActivity : ComponentActivity() {
     private val viewModel: MainActivityViewModel by viewModel()
 
@@ -35,6 +37,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MainTheme {
+                val context = LocalContext.current
 //                ChangeSystemBarsColor(
 //                    statusBarColor = Theme.colors.singleTheme,
 //                    navigationBarColor = Theme.colors.singleTheme
@@ -73,10 +76,15 @@ class MainActivity : ComponentActivity() {
                     }
 
                     override fun navigateToSettingsScreen() {
-                        if (selectedScreen != Screen.Settings) {
-                            selectedScreen = Screen.Settings
-                            navigate()
-                        }
+                        Toast.makeText(
+                            context,
+                            Resources.string.no_screen_here,
+                            Toast.LENGTH_SHORT
+                        ).show()
+//                        if (selectedScreen != Screen.Settings) {
+//                            selectedScreen = Screen.Settings
+//                            navigate()
+//                        }
                     }
 
                 }
