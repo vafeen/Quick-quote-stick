@@ -117,7 +117,7 @@ internal class MainScreen() : ComposableScreen {
         var message by remember { mutableStateOf("") }
         var messages = remember {
             mutableStateListOf(
-                "Тест",
+                "Click to delete",
             )
         }
 
