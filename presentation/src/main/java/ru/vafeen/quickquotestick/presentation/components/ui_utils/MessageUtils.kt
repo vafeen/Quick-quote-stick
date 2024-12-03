@@ -60,7 +60,6 @@ internal fun TGMessage(
     title: String? = null, text: String, index: Int, size: Int
 ) {
     val cornerBottomSize = 10.dp
-    val dt by remember { mutableStateOf(LocalDateTime.now()) }
     var messageMenu by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.Bottom,
@@ -97,15 +96,7 @@ internal fun TGMessage(
                 }
                 Spacer(modifier = Modifier.height(2.dp))
                 MessageText(text = text)
-                Text(
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.End),
-                    text = dt.getMesTime(),
-                    fontSize = 12.sp
-                )
             }
         }
     }
 }
-
-fun LocalDateTime.getMesTime(): String = "${hour}:" + if (minute < 10) "0${minute}" else "$minute"
