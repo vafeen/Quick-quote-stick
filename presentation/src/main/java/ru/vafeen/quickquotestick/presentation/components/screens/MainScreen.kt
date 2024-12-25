@@ -251,7 +251,6 @@ internal class MainScreen() : ComposableScreen {
                 ) {
                     LazyColumn(
                         state = lazyListState,
-                        modifier = Modifier.background(Color.Transparent)
                     ) {
                         itemsIndexed(messages) { index, it ->
                             TGMessage(
